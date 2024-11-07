@@ -20,8 +20,7 @@ git config --global user.email "<your email>"
 <br/><br/>
 
 > [!NOTE]
-> It is important to configure these settings after running [git](url) for the first time.
-
+> It is important to configure these settings after running [git](https://git-scm.com) for the first time.
 <br/>
 
 # פקודות בסיסיות
@@ -48,7 +47,8 @@ git status
 ```
 
 <br><br><br>
-# ניהול גרסאות commit
+# מעבר בין areas
+#### add stash 
 
 ### git add 
 
@@ -76,6 +76,10 @@ git commit -am "<commit name>" #Marks and adds all changes to the tracking (no n
 <br><br><br>
 
 # היסטוריה גרסאות
+> [!IMPORTANT]
+> אם רוצים דוגמה מסויימת מומלץ להשתמש בchatgpt
+
+<br><br>
 ### git log 
 בעזרתו נוכל לצפות ברשימת הקומטים שבוצעו במאגר הנוכחי. כל שורת קומיט כוללת את ה-hash(מזהה) הייחודי לו, את השם הכותב, את תאריך ושעת הקומיט, ולעיתים הודעה שמסבירה גם את השינויים שבוצעו
 
@@ -107,10 +111,7 @@ git log <Branch1>..<Branch2> #מאפשר להשוות את הענף הנוכחי
 git log --decorate #הפקודה תציג כל קומיט עם פרטים על הבראנצ או התגית שקשורים אליו
 
 ```
-> [!IMPORTANT]
-> אם רוצים דוגמה מסויימת מומלץ להשתמש בchatgpt
 
-<br><br>
 
 ### git diff
 
@@ -168,11 +169,123 @@ git diff -w
 
 ```
 
+### git show
+מאפשרת להציג מידע מפורט על קומיט ספציפי. זה כולל את מזהה הקומיט, מחבר הקומיט, תאריך הקומיט, ההודעה וכן את השינויים שבוצעו בקבצים. אפשר להגיד שזה שילוב של גיט לוג וגיט דיף
+
+```sh
+# הצגת commit ספציפי
+git show <commit_hash>
+
+#שימוש בדגלים להצגת מידע נוסף:
+
+
+git show --pretty=oneline <commit_hash>     # הצגת commit בשורה אחת
+git show --pretty=short <commit_hash>        # פורמט קצר של commit
+git show --pretty=full <commit_hash>         # פורמט מלא עם פרטים נוספים
+git show --pretty=format:"%h %an %s" <commit_hash>  # פורמט מותאם אישית
+
+# הצגת שמות הקבצים בלבד
+git show --name-only <commit_hash>
+
+# הצגת שמות הקבצים עם סטטוס (A - הוספה, D - מחיקה)
+git show --name-status <commit_hash>
+
+# הצגת סיכום סטטיסטי של השינויים
+git show --stat <commit_hash>
+
+# הצגת כל הפאץ' (ברירת המחדל)
+git show -p <commit_hash>
+
+# הצגת תוכן קובץ מסוים מענף מסוים
+git show main:README.md
+
+# הצגת מידע על תגית
+git show <tag_name>
+
+# צמצום הבדלים לנתיב מסוים
+git show --relative=<path> <commit_hash>
+
+# הצגת commit בלי השינויים בקוד (רק הכותרת והמטא-דאטה)
+git show --no-patch <commit_hash>
+```
+
+### git reflog
+הפקודה git reflog מציגה את ההיסטוריה של השינויים ב-HEAD. זה כולל לא רק את ה-commits, אלא גם את השינויים בענפים (branches), פעולות מיזוג (merges) ושימוש בפקודות כמו git reset. הפקודה מהווה כלי שימושי במיוחד למעקב אחרי שינויים שנעשו ב-HEAD, גם כאשר נעשו פעולות מורכבות שעלולות להשפיע על ההיסטוריה של המאגר.
+ 
+```sh
+# הצגת היסטוריית ה-HEAD (ברירת המחדל)
+git reflog
+
+# הצגת היסטוריית הפניות של branch מסוים (כגון main)
+git reflog show main
+
+# הצגת מספר מוגבל של ערכים אחרונים (לדוגמה, 5 ערכים)
+git reflog -n 5
+
+# שימוש בפורמט מותאם אישית להצגת ההיסטוריה
+git reflog --pretty=oneline
+git reflog --pretty=format:"%h %gd %gs"
+
+# הצגת ההיסטוריה עם נתוני תאריך בפורמטים שונים
+git reflog --date=iso
+git reflog --date=relative
+
+# מחיקת ערכי reflog ישנים (נדרשת זהירות!)
+git reflog expire --expire=now --all
+
+# שחזור commit שנמצא ב-reflog באמצעות reset
+git reset --hard HEAD@{2}
+
+# הצגת היסטוריית ההפניות של תגית (tag) מסוימת
+git reflog show <tag_name>
+
+# הצגת היסטוריית הפניות של אובייקט מסוים (למשל HEAD)
+git reflog show HEAD
+```
+
+<br>
+
+### git blame
+הפקודה git blame משמשת למעקב אחרי היסטוריית השינויים בכל שורת קוד בקובץ ספציפי. הפקודה מציגה מי המחבר של כל שורה ומתי השורה נערכה בפעם האחרונה. זהו כלי שימושי להבנת מי שינה חלקים מסוימים בקוד, באיזה commit השינוי נעשה ומתי זה קרה.
+
+```sh
+# שימוש בסיסי להצגת היסטוריית שינויים של קובץ
+git blame <filename>
+
+# הצגת blame עבור טווח שורות מסוים (לדוגמה, שורות 10 עד 20)
+git blame -L 10,20 <filename>
+
+# הצגת blame עם תאריך בפורמט יחסי (כגון "5 days ago")
+git blame --date=relative <filename>
+
+# הצגת blame עם תאריך בפורמט ISO סטנדרטי
+git blame --date=iso <filename>
+
+# הצגת כתובת האימייל של המחבר במקום שם המחבר
+git blame --show-email <filename>
+
+# הצגת blame עבור commit ספציפי
+git blame <commit_hash> -- <filename>
+
+# הצגת blame תוך התעלמות מ-commits מסוימים (למשל, תהליך refactoring)
+git blame --ignore-rev <commit_hash> <filename>
+
+# הצגת blame עם התעלמות מ-commits מרובים (נוח לתהליכי refactoring גדולים)
+git blame --ignore-revs-file=<file_with_commit_hashes> <filename>
+
+# הצגת blame תוך דילוג על מרווחי רווח לבנים (whitespace changes)
+git blame -w <filename>
+
+# הצגת blame עם מידע נוסף כמו שם הקובץ המקורי (useful for renaming)
+git blame --root <filename>
+
+```
+
+
 
 # ניהול קבצים ושינויים
 
 ```sh
-
 git rm <file_name> #מסיר קובץמהמיקום שלו ומוסיף את ההסרה ל 
 
 ```
@@ -198,12 +311,8 @@ git branch
 
 
 
-### git clone 
-משכפל מאגר מרוחק למחשב
 
-```sh
-git clone https://github.com.user/repo.git
-```
+
 
 ### git clone 
 משכפל מאגר מרוחק למחשב
@@ -222,16 +331,6 @@ git clone https://github.com.user/repo.git
 ### git clone 
 משכפל מאגר מרוחק למחשב
 
-```sh
-git clone https://github.com.user/repo.git
-```
-
-### git clone 
-משכפל מאגר מרוחק למחשב
-
-```sh
-git clone https://github.com.user/repo.git
-```
 
 ### git clone 
 משכפל מאגר מרוחק למחשב
