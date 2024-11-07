@@ -346,7 +346,10 @@ git reset --hard
 
 ```
 
-
+mv
+ revert - chaning area 
+ rebase 
+ chery pick 
 
 
 
