@@ -210,7 +210,7 @@ git show --no-patch <commit_hash>
 ```
 
 ### git reflog
-הפקודה git reflog מציגה את ההיסטוריה של השינויים ב-HEAD. זה כולל לא רק את ה-commits, אלא גם את השינויים בענפים (branches), פעולות מיזוג (merges) ושימוש בפקודות כמו git reset. הפקודה מהווה כלי שימושי במיוחד למעקב אחרי שינויים שנעשו ב-HEAD, גם כאשר נעשו פעולות מורכבות שעלולות להשפיע על ההיסטוריה של המאגר.
+הפקודה ```git reflog``` מציגה את ההיסטוריה של השינויים ב-HEAD. זה כולל לא רק את ה-commits, אלא גם את השינויים בענפים (branches), פעולות מיזוג (merges) ושימוש בפקודות כמו git reset. הפקודה מהווה כלי שימושי במיוחד למעקב אחרי שינויים שנעשו ב-HEAD, גם כאשר נעשו פעולות מורכבות שעלולות להשפיע על ההיסטוריה של המאגר.
  
 ```sh
 # הצגת היסטוריית ה-HEAD (ברירת המחדל)
@@ -246,7 +246,7 @@ git reflog show HEAD
 <br>
 
 ### git blame
-הפקודה git blame משמשת למעקב אחרי היסטוריית השינויים בכל שורת קוד בקובץ ספציפי. הפקודה מציגה מי המחבר של כל שורה ומתי השורה נערכה בפעם האחרונה. זהו כלי שימושי להבנת מי שינה חלקים מסוימים בקוד, באיזה commit השינוי נעשה ומתי זה קרה.
+הפקודה ```git blame``` משמשת למעקב אחרי היסטוריית השינויים בכל שורת קוד בקובץ ספציפי. הפקודה מציגה מי המחבר של כל שורה ומתי השורה נערכה בפעם האחרונה. זהו כלי שימושי להבנת מי שינה חלקים מסוימים בקוד, באיזה commit השינוי נעשה ומתי זה קרה.
 
 ```sh
 # שימוש בסיסי להצגת היסטוריית שינויים של קובץ
@@ -284,14 +284,67 @@ git blame --root <filename>
 
 
 # ניהול קבצים ושינויים
+### git rm 
+הפקודה ```git rm``` משמשת למחיקת קבצים מתוך מאגר Git. היא מסירה את הקובץ גם ממערכת הקבצים שלך וגם ממצב הסטייג'ינג של Git, כך שב-commit הבא הקובץ לא ייכלל במאגר
+
 
 ```sh
-git rm <file_name> #מסיר קובץמהמיקום שלו ומוסיף את ההסרה ל 
+# 1. מחיקת קובץ מהמאגרים ומהמחשב
+git rm <filename>
+# דוגמה:
+git rm old_file.txt
 
+# 2. הסרת קובץ מהמאגרים אך לא מהמחשב (שמור את הקובץ בתיקיית העבודה)
+git rm --cached <filename>
+
+# 3. מחיקת תיקייה ורוב קבצי משנה בתוכה (רקורסיבית)
+git rm -r <directory>
+
+# 4. מחיקת קבצים בכפייה אם הם כבר שונו בסטייג'ינג
+git rm -f <filename>
+
+# 5. מחיקת קבצים ומודעות על מחיקת קבצים שלא נמצאים במעקב (כמו קבצים חדשים)
+git rm -n <filename>
+
+# 6. מחיקת קבצים עם דגל -r (רקורסיבי) וגם עם חיפוש סיומות מסוימות
+git rm -r '*.log'
 ```
 
 
+### git reset 
+הפקודה ```git reset``` ב-Git משמשת לשינוי מצבו של ה-HEAD (הנקודה בה אתה נמצא בגרסה הנוכחית של המאגר) ולביצוע שינויים בסטייג'ינג וב-working directory. עם ```git reset``` אפשר לנוע אחורה בהיסטוריה של הקומיטים או לבטל שינויים שבוצעו לאחר מכן.
 
+
+```sh
+# 1. git reset --soft <commit>
+# Reset to a specific commit and keep changes in the staging area (changes are ready to be committed)
+git reset --soft <commit>
+
+# 2. git reset --mixed <commit>
+# Reset to a specific commit and keep changes only in the Working Directory (not in the staging area)
+git reset --mixed <commit>
+
+# 3. git reset --hard <commit>
+# Reset to a specific commit and remove all changes (both in the Working Directory and the staging area)
+git reset --hard <commit>
+
+# 4. git reset --merge <commit>
+# Reset to a specific commit while keeping changes without creating conflicts (useful during merges)
+git reset --merge <commit>
+
+# 5. git reset --keep <commit>
+# Reset to a specific commit while keeping changes in the Working Directory if they don't cause conflicts
+git reset --keep <commit>
+
+# 6. git reset <commit> (default, equivalent to --mixed)
+# Reset to a specific commit while keeping changes in the Working Directory but not in the staging area
+git reset <commit>
+
+# 7. git reset --hard
+# Reset to the initial state of the repository, removing all changes (nothing left in the Working Directory)
+git reset --hard
+
+```
 
 
 
@@ -314,12 +367,6 @@ git branch
 
 
 
-### git clone 
-משכפל מאגר מרוחק למחשב
-
-```sh
-git clone https://github.com.user/repo.git
-```
 
 ### git clone 
 משכפל מאגר מרוחק למחשב
